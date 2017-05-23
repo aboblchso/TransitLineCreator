@@ -96,8 +96,8 @@ public class LineCreator {
 
         VehicleType vehicleTypeBus = factory.createVehicleType(Id.create(routeName, VehicleType.class));
         VehicleCapacity capacityBus = factory.createVehicleCapacity();
-        capacityBus.setSeats(35);
-        capacityBus.setStandingRoom(120);
+        capacityBus.setSeats(44);
+        capacityBus.setStandingRoom(44);
         vehicleTypeBus.setCapacity(capacityBus);
         vehicleTypeBus.setMaximumVelocity(90/3.6);
 

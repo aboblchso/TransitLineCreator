@@ -32,14 +32,15 @@ public class Runner {
         Map<String , Integer> closingHour = new HashMap<>();
         Map<String , Integer> frequency = new HashMap<>();
         Map<String, String> mode = new HashMap<>();
+        String modelScenario = "_horizon2021_1";
 
         Config config = ConfigUtils.createConfig();
         config.transit().setUseTransit(true);
         Scenario scenario = ScenarioUtils.createScenario(config);
         MatsimNetworkReader matsimNetworkReader = new MatsimNetworkReader(scenario.getNetwork());
-        matsimNetworkReader.readFile("input/spbMetro/network_horizon_2021test.xml");
+        matsimNetworkReader.readFile("input/spball/network" + modelScenario + ".xml");
 
-        Files.readAllLines(Paths.get("input/spbMetro/links_metro_2021.csv")).stream().forEach(line->{
+        Files.readAllLines(Paths.get("input/spball/links" + modelScenario + ".csv")).stream().forEach(line->{
             String[] items = line.split(";");
             String routeID = items[0];
             Integer opening = Integer.parseInt(items[3]);
@@ -59,7 +60,7 @@ public class Runner {
             mode.put(routeID, mod);
         });
 
-        Files.readAllLines(Paths.get("input/spbMetro/nodes_metro_2021.csv")).stream().forEach(line->{
+        Files.readAllLines(Paths.get("input/spball/nodes" + modelScenario + ".csv")).stream().forEach(line->{
             String[] items = line.split(";");
             String routeID = items[0];
             List<String> list = nodeIds.get(routeID);
@@ -85,11 +86,11 @@ public class Runner {
             lineCreator.create();
         });
         TransitScheduleWriter transitScheduleWriter = new TransitScheduleWriter(scenario.getTransitSchedule());
-        transitScheduleWriter.writeFile("transitSchedule.xml");
+        transitScheduleWriter.writeFile("transitSchedule" + modelScenario + ".xml");
         VehicleWriterV1 vehicleWriterV1 = new VehicleWriterV1(scenario.getTransitVehicles());
-        vehicleWriterV1.writeFile("transitVehicles.xml");
+        vehicleWriterV1.writeFile("transitVehicles" + modelScenario + ".xml");
         NetworkWriter networkWriter = new NetworkWriter(scenario.getNetwork());
-        networkWriter.write("network.xml");
+        networkWriter.write("network" + modelScenario + ".xml");
 
         config.controler().setOverwriteFileSetting(OutputDirectoryHierarchy.OverwriteFileSetting.deleteDirectoryIfExists);
         Controler controler = new Controler(scenario);
