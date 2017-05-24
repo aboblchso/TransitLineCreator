@@ -99,28 +99,28 @@ public class LineCreator {
         capacityBus.setSeats(44);
         capacityBus.setStandingRoom(44);
         vehicleTypeBus.setCapacity(capacityBus);
-        vehicleTypeBus.setMaximumVelocity(90/3.6);
+        vehicleTypeBus.setMaximumVelocity(60/3.6);
 
         VehicleType vehicleTypeTrain = factory.createVehicleType(Id.create(routeName, VehicleType.class));
         VehicleCapacity capacityTrain = factory.createVehicleCapacity();
         capacityTrain.setSeats(864);
         capacityTrain.setStandingRoom(736);
         vehicleTypeTrain.setCapacity(capacityTrain);
-        vehicleTypeTrain.setMaximumVelocity(90/3.6);
+        vehicleTypeTrain.setMaximumVelocity(60/3.6);
 
         VehicleType vehicleTypeMetro = factory.createVehicleType(Id.create(routeName, VehicleType.class));
         VehicleCapacity capacityMetro = factory.createVehicleCapacity();
         capacityMetro.setSeats(264);
         capacityMetro.setStandingRoom(1080);
         vehicleTypeMetro.setCapacity(capacityMetro);
-        vehicleTypeMetro.setMaximumVelocity(90/3.6);
+        vehicleTypeMetro.setMaximumVelocity(60/3.6);
 
         VehicleType vehicleTypeLrt = factory.createVehicleType(Id.create(routeName, VehicleType.class));
         VehicleCapacity capacityLrt = factory.createVehicleCapacity();
         capacityLrt.setSeats(58);
         capacityLrt.setStandingRoom(135);
         vehicleTypeLrt.setCapacity(capacityLrt);
-        vehicleTypeLrt.setMaximumVelocity(90/3.6);
+        vehicleTypeLrt.setMaximumVelocity(60/3.6);
 
         switch (mode){
             case "train":
@@ -164,13 +164,14 @@ public class LineCreator {
                     continue;
                 }
                 double distance = CoordUtils.calcEuclideanDistance(stopLink.getCoord(), fromLinkId.getCoord());
-                arrivalOffset += distance / (18 / 3.6);
+                arrivalOffset += distance / ( 50 / 3.6);
             }
             TransitStopFacility facility = factory.createTransitStopFacility(Id.create(routeName + (id++),
                     TransitStopFacility.class), stopLink.getCoord(), false);
             facility.setLinkId(stopLink.getId());
             transitSchedule.addStopFacility(facility);
-            TransitRouteStop transitRouteStop = factory.createTransitRouteStop(facility, arrivalOffset,arrivalOffset);
+            TransitRouteStop transitRouteStop = factory.createTransitRouteStop(facility, arrivalOffset,arrivalOffset + 30);
+            transitRouteStop.setAwaitDepartureTime(true);
             stops.add(transitRouteStop);
         }
     }
@@ -187,8 +188,8 @@ public class LineCreator {
             link.setCapacity(capacity*(lanes - 1) / lanes);
         } else
         {
-            link.setNumberOfLanes(1);
-            link.setCapacity(100);
+            link.setNumberOfLanes(link.getNumberOfLanes());
+            link.setCapacity(link.getCapacity());
         }
     }
 
