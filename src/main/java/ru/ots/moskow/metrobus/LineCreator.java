@@ -133,7 +133,7 @@ public class LineCreator {
                 vehicles.addVehicleType(vehicleTypeLrt);
                 break;
             default:
-                vehicles.addVehicleType(vehicleTypeLrt);
+                vehicles.addVehicleType(vehicleTypeBus);
         }
 
         for (int i = opening; i < closing; i+=frequency){
@@ -182,7 +182,7 @@ public class LineCreator {
     private void reduceLinkCapacityAndLanes(Link link) {
         double lanes = link.getNumberOfLanes();
         double capacity = link.getCapacity();
-        if (lanes > 1){
+        if (lanes > 6){
             link.setNumberOfLanes(lanes - 1);
             link.setCapacity(capacity*(lanes - 1) / lanes);
         } else
