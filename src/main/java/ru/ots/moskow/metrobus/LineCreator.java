@@ -56,13 +56,21 @@ public class LineCreator {
         this.scenario = scenario;
     }
 
-    public void create(){
+    public void createWithDedicatedLanes(){
         prepareNetwork();
         obtainRouteLinks();
         createDedicatedLinks();
         reduceMainLinkLines();
         createStops();
         createLineAndRoute();
+        createDepartures();
+    }
+
+    public void createOnExistingLanes(){
+        prepareNetwork();
+        obtainRouteLinks();
+        createStops();
+        createLineandRouteWithoutDedicatedWay();
         createDepartures();
     }
 
@@ -73,6 +81,19 @@ public class LineCreator {
     private void normalizeLink(Link link) {
         double length = CoordUtils.calcEuclideanDistance(link.getFromNode().getCoord(), link.getToNode().getCoord());
         link.setLength(length);
+    }
+
+    private void createLineandRouteWithoutDedicatedWay () {
+        TransitSchedule transitSchedule = scenario.getTransitSchedule();
+        TransitScheduleFactory transitScheduleFactory = transitSchedule.getFactory();
+        TransitLine transitLine = transitScheduleFactory.createTransitLine(Id.create(routeName, TransitLine.class));
+        transitSchedule.addTransitLine(transitLine);
+        List<Id<Link>> linkIds = new ArrayList<>();
+        routeLinks.stream().forEach(link -> linkIds.add(link.getId()));
+        NetworkRoute networkRoute = RouteUtils.createNetworkRoute(linkIds, network);
+        String mode = this.mode;
+        transitRoute = transitScheduleFactory.createTransitRoute(Id.create(routeName, TransitRoute.class), networkRoute, stops, mode);
+        transitLine.addRoute(transitRoute);
     }
 
     private void createLineAndRoute() {
@@ -152,13 +173,13 @@ public class LineCreator {
         TransitScheduleFactory factory = transitSchedule.getFactory();
         double arrivalOffset = 0;
         for (int i = 0; i < stopLinks.length; i++){
-            Link stopLink = network.getLinks().get(Id.createLinkId("brt_"+stopLinks[i]));
+            Link stopLink = network.getLinks().get(Id.createLinkId(mode + stopLinks[i]));
             if (stopLink == null){
                 System.out.println("No link with id " + stopLinks[i]);
                 continue;
             }
             if (i != 0){
-                Link fromLinkId = network.getLinks().get(Id.createLinkId("brt_"+stopLinks[i - 1]));
+                Link fromLinkId = network.getLinks().get(Id.createLinkId(mode + stopLinks[i - 1]));
                 if (fromLinkId == null){
                     System.out.println("No link with id " + stopLinks[i-1]);
                     continue;
